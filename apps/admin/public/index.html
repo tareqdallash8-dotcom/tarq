@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Volt - الإدارة</title>
+  <link rel="icon" href="../shared/icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <link rel="stylesheet" href="../shared/style.css">
+  <style>
+    body { background: var(--bg); }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 16px; }
+    .head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+    .head h1 { margin: 0; font-size: 22px; }
+    .nav { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+    .nav button { border: 0; background: #e9ebf0; padding: 9px 16px; border-radius: 10px; font-weight: 700; color: var(--ink-2); }
+    .nav button.on { background: var(--ink); color: #fff; }
+    .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 14px; }
+    .tile { background: var(--card); border-radius: 14px; padding: 14px; border: 1px solid var(--line); }
+    .tile .n { font-size: 26px; font-weight: 900; }
+    .tile .l { color: var(--ink-2); font-size: 13px; }
+    .panel { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
+    .tablewrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { text-align: start; padding: 10px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+    th { color: var(--ink-2); font-size: 12px; font-weight: 700; }
+    #adminmap { height: 380px; border-radius: 12px; margin-top: 14px; z-index: 0; }
+    .form { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+    .login { max-width: 360px; margin: 14vh auto 0; padding: 0 16px; }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="../shared/lib.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

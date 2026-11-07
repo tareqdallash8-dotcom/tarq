@@ -1,0 +1,17 @@
+{
+  "name": "volt",
+  "version": "0.1.0",
+  "description": "Ride-hailing MVP for Amman: rider app, driver app, admin dashboard. Cash only, JOD.",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "start": "npm run start --workspace=@volt/api",
+    "test": "npm run test --workspace=@volt/api"
+  },
+  "engines": {
+    "node": ">=22.5"
+  }
+}

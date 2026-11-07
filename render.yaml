@@ -1,0 +1,33 @@
+services:
+  - type: web
+    name: NEW2026TAREQ
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: DB_FILE
+        value: /tmp/volt.db
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_WEBHOOK_SECRET
+        sync: false
+      - key: TELEGRAM_OWNER_ID
+        sync: false
+      - key: TELEGRAM_EDITOR_ID
+        sync: false
+      - key: TELEGRAM_ANALYST_ID
+        sync: false
+      - key: TELEGRAM_CHANNEL_ID
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_MODEL
+        value: gpt-4.1-mini
+      - key: RSS_FEEDS
+        value: https://feeds.bbci.co.uk/news/business/rss.xml
+      - key: RSS_POLL_MINUTES
+        value: "30"

@@ -1,0 +1,12 @@
+{
+  "name": "@volt/api",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "node --no-warnings server.js",
+    "test": "node test/e2e.js && node --no-warnings --test test/newsroom.test.js"
+  },
+  "engines": {
+    "node": ">=22.5"
+  }
+}
