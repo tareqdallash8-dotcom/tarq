@@ -97,6 +97,9 @@ function createNewsroom({ db, env = process.env, fetchImpl = fetch, clock = Date
   }
   const botToken = String(env.TELEGRAM_BOT_TOKEN || '');
   const webhookSecret = String(env.TELEGRAM_WEBHOOK_SECRET || '');
+  if (webhookSecret && !/^[A-Za-z0-9_-]{1,256}$/.test(webhookSecret)) {
+    throw new Error('Telegram webhook secret must use only letters, numbers, underscores, or hyphens.');
+  }
   const openAiKey = String(env.OPENAI_API_KEY || '');
   const model = String(env.OPENAI_MODEL || 'gpt-4.1-mini');
   const channelId = String(env.TELEGRAM_CHANNEL_ID || '');
@@ -133,6 +136,21 @@ function createNewsroom({ db, env = process.env, fetchImpl = fetch, clock = Date
 
   async function sendMessage(chatId, text) {
     return telegram('sendMessage', { chat_id: chatId, text: String(text).slice(0, 3900), disable_web_page_preview: true });
+  }
+
+  async function registerWebhook(publicUrl) {
+    if (!botToken || !webhookSecret || typeof publicUrl !== 'string' || !publicUrl) return false;
+    try {
+      const base = new URL(publicUrl);
+      if (base.protocol !== 'https:') return false;
+      return telegram('setWebhook', {
+        url: new URL('/telegram-webhook', base.origin).toString(),
+        secret_token: webhookSecret,
+        allowed_updates: ['message'],
+      });
+    } catch {
+      return false;
+    }
   }
 
   async function askOpenAI(prompt) {
@@ -308,6 +326,7 @@ function createNewsroom({ db, env = process.env, fetchImpl = fetch, clock = Date
   return {
     handleUpdate,
     validWebhookSecret,
+    registerWebhook,
     collectFeeds,
     start,
     roleFor,

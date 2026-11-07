@@ -11,27 +11,16 @@
 
 ## النشر على Render
 
-1. ادفع هذا المستودع إلى GitHub، ثم من Render اختر **New + → Blueprint** واربط المستودع. سيقرأ Render إعدادات `render.yaml` وينشئ خدمة الويب `NEW2026TAREQ` باستخدام `npm install` و`npm start`. نقطة فحص الجاهزية هي `GET /health`.
+1. ادفع هذا المستودع إلى GitHub، ثم من Render اختر **New + → Blueprint** واربط المستودع. سيقرأ Render إعدادات `render.yaml` وينشئ خدمة الويب `NEW2026TAREQ` باستخدام أمر البناء `npm install` وأمر التشغيل `npm run start:newsroom`. هذا الأمر يشغّل `apps/api/newsroom-server.js` مباشرة ولا يشغّل تطبيق Volt. نقطة فحص الجاهزية هي `GET /health` وتعرّف الخدمة باسم Gold & Silver Newsroom.
 2. في **Environment** للخدمة، أدخل القيم المطلوبة في الحقول السرية:
    - `TELEGRAM_BOT_TOKEN`: أنشئ بوتاً عبر `@BotFather` وخزّن الرمز هنا فقط.
    - `TELEGRAM_WEBHOOK_SECRET`: قيمة عشوائية من 32 بايت على الأقل، بأحرف وأرقام وشرطة سفلية أو ناقص. لا تضعها في المستودع.
    - `TELEGRAM_OWNER_ID` و`TELEGRAM_EDITOR_ID` و`TELEGRAM_ANALYST_ID`: أرقام حسابات الفريق التي يعرضها `/myid`. يجب أن تكون مختلفة.
    - `TELEGRAM_CHANNEL_ID`: معرّف القناة، واجعل البوت مشرفاً فيها مع صلاحية النشر.
    - `OPENAI_API_KEY`: مفتاح OpenAI، ويُخزن كقيمة سرية في Render فقط.
-   - `ADMIN_PASSWORD`: كلمة مرور قوية للوحة الإدارة الحالية؛ لا يوجد افتراضي ولا تضعها في المستودع.
 3. راجع القيم العادية في `render.yaml`: `OPENAI_MODEL` و`RSS_FEEDS` و`RSS_POLL_MINUTES`. `RSS_FEEDS` قائمة روابط RSS موثوقة مفصولة بفواصل أو أسطر. لا تُضمّن أي مفاتيح في روابط الخلاصات.
-4. بعد اكتمال النشر، انسخ عنوان الخدمة الذي عيّنه Render (مثل `https://اسم-الخدمة.onrender.com`). أرسل طلب `setWebhook` إلى Telegram من طرفيتك المحلية الآمنة، مع استبدال القيم النائبة دون حفظ الرمز في ملف أو مستودع. استخدم الرمز والسر من Render:
-
-   ```sh
-   curl --fail-with-body --silent --show-error \
-     --request POST "https://api.telegram.org/bot<TELEGRAM_BOT_TOKEN>/setWebhook" \
-     --data-urlencode "url=https://<RENDER_HOST>/telegram-webhook" \
-     --data-urlencode "secret_token=<TELEGRAM_WEBHOOK_SECRET>" \
-     --data-urlencode 'allowed_updates=["message"]'
-   ```
-
-   تحقق من نتيجة Telegram التي تتضمن `"ok":true`، ومن `https://<RENDER_HOST>/health` التي يجب أن تعيد `{"ok":true}`. لا تشارك رابط طلب `setWebhook` أو مخرجات تحتوي رمز البوت.
-5. اختبر البوت بإرسال `/start` من Telegram، ثم جرّب `/myid` لكل عضو وسجّل كل معرّف في متغير الصلاحية الصحيح. لا تعتبر النشر مكتملاً قبل أن يرد البوت على رسالة `/start` حقيقية. جرّب بعد ذلك `/news` للمحرر ثم `/approve رقم`، وتأكد من ظهور الخبر في القناة.
+4. يسجّل التطبيق webhook تلقائياً عند بدء التشغيل باستخدام `RENDER_EXTERNAL_URL` الذي يوفّره Render، والمسار `/telegram-webhook`، وسر التحقق المخزّن في `TELEGRAM_WEBHOOK_SECRET`. لا يلزم تمرير رمز البوت أو السر في أمر طرفية. راقب سجل بدء التشغيل لرسالة نجاح تسجيل webhook دون مشاركة أي أسرار.
+5. تحقق من `https://<RENDER_HOST>/health`؛ يجب أن تعيد JSON تتضمن `"service":"gold-silver-newsroom"` و`"name":"Gold & Silver Newsroom"`. اختبر البوت بإرسال `/start` حقيقية إليه، ثم جرّب `/myid` لكل عضو وسجّل كل معرّف في متغير الصلاحية الصحيح. جرّب بعد ذلك `/news` للمحرر ثم `/approve رقم` وتأكد من ظهور الخبر في القناة. لا تعتبر البوت جاهزاً قبل وصول رد Telegram حقيقي.
 
 ## التخزين على الخطة المجانية
 
@@ -45,7 +34,11 @@
 npm start
 ```
 
-اضبط `ADMIN_PASSWORD` في بيئة الطرفية التي تشغّل الخادم؛ تسجيل دخول الإدارة معطّل إذا لم تُضبط. اضبط القيمة نفسها في الطرفية الثانية قبل الاختبارات.
+الأمر `npm start` يبقي تطبيق Volt الحالي كما هو. لتشغيل غرفة الأخبار محلياً في وضع منفصل استخدم:
+
+```sh
+npm run start:newsroom
+```
 
 وفي طرفية ثانية، شغّل الاختبارات:
 
@@ -53,14 +46,14 @@ npm start
 npm test
 ```
 
-الخدمة الحالية تستمر أيضاً في تقديم تطبيق الركاب والسائقين والإدارة. يختبر `npm test` رحلة التطبيق الموجودة، بالإضافة إلى اختبارات غرفة الأخبار لتحديثات Telegram والصلاحيات والتحقق من webhook وRSS واستجابة OpenAI وفحص الصحة.
+يشغّل اختبار الرحلة الموجود تطبيق Volt على المنفذ 3000؛ اضبط `ADMIN_PASSWORD` وشغّل `npm start` في طرفية قبل `npm test`. تختبر اختبارات غرفة الأخبار خادم `apps/api/newsroom-server.js` بشكل مستقل.
 
 ## متغيرات البيئة
 
 | المتغير | الغرض |
 |---|---|
 | `PORT` | منفذ HTTP الذي يمرره Render |
-| `DB_FILE` | ملف SQLite؛ Render Blueprint يستخدم `/tmp/volt.db` |
+| `DB_FILE` | ملف SQLite؛ Render Blueprint يستخدم `/tmp/newsroom.db` |
 | `TELEGRAM_BOT_TOKEN` | رمز Telegram Bot API، قيمة سرية |
 | `TELEGRAM_WEBHOOK_SECRET` | سر التحقق من ترويسة Telegram، قيمة سرية |
 | `TELEGRAM_OWNER_ID` / `TELEGRAM_EDITOR_ID` / `TELEGRAM_ANALYST_ID` | معرّفات أعضاء الفريق |
@@ -69,4 +62,3 @@ npm test
 | `OPENAI_MODEL` | اسم نموذج Responses API، الافتراضي `gpt-4.1-mini` |
 | `RSS_FEEDS` | روابط خلاصات RSS مفصولة بفواصل أو أسطر |
 | `RSS_POLL_MINUTES` | مدة الجمع الدوري بالدقائق، والحد الأدنى 5 |
-| `ADMIN_PASSWORD` | كلمة مرور لوحة إدارة Volt الحالية |

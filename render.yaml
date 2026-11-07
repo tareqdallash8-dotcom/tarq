@@ -4,13 +4,11 @@ services:
     runtime: node
     plan: free
     buildCommand: npm install
-    startCommand: npm start
+    startCommand: npm run start:newsroom
     healthCheckPath: /health
     envVars:
       - key: DB_FILE
-        value: /tmp/volt.db
-      - key: ADMIN_PASSWORD
-        sync: false
+        value: /tmp/newsroom.db
       - key: TELEGRAM_BOT_TOKEN
         sync: false
       - key: TELEGRAM_WEBHOOK_SECRET
